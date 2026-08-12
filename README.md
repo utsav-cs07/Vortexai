@@ -1,5 +1,5 @@
 # VortexAI — Real-Time Streaming RAG Pipeline
-
+![CI Status](https://github.com/utsav-cs07/Vortexai/actions/workflows/test.yml/badge.svg)
 A real-time, event-driven data pipeline that ingests a live data stream, validates and cleans it through a Medallion architecture, embeds it into a vector database, and guards retrieval results with a cosine-similarity groundedness check — all visible on a live telemetry dashboard.
 
 ## Problem Statement
