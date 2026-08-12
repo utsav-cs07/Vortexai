@@ -1,0 +1,38 @@
+# ===== Secrets & environment files (NEVER commit these) =====
+.env
+.env.*
+!.env.example
+*.pem
+*.key
+credentials.json
+aws_credentials
+.aws/
+
+# ===== Python =====
+__pycache__/
+*.py[cod]
+*.egg-info/
+.pytest_cache/
+.venv/
+venv/
+env/
+
+# ===== Generated / runtime data (large, constantly changing, not source code) =====
+storage/bronze/
+storage/silver/*.parquet
+storage/silver/.synced_hashes.json
+
+# ===== Prefect local runtime files =====
+.prefect/
+
+# ===== Streamlit =====
+.streamlit/secrets.toml
+
+# ===== IDE / OS clutter =====
+.vscode/
+.idea/
+.DS_Store
+Thumbs.db
+
+# ===== Docker =====
+*.log
