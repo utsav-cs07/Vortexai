@@ -20,8 +20,8 @@ logger = logging.getLogger("vortex-vector-sink")
 
 SILVER_PATH = "storage/silver/silver_events.parquet"
 SYNCED_HASHES_PATH = "storage/silver/.synced_hashes.json"
-QDRANT_HOST = "127.0.0.1"
-QDRANT_PORT = 6333
+QDRANT_HOST = os.environ.get("QDRANT_HOST", "127.0.0.1")
+QDRANT_PORT = int(os.environ.get("QDRANT_PORT", "6333"))
 COLLECTION_NAME = "vortex_events"
 EMBEDDING_MODEL_NAME = "all-MiniLM-L6-v2"
 EMBEDDING_DIM = 384  # fixed output size for all-MiniLM-L6-v2

@@ -14,8 +14,10 @@ from confluent_kafka import Producer
 logging.basicConfig(level=logging.INFO, format="%(asctime)s [%(levelname)s] %(message)s")
 logger = logging.getLogger("vortex-producer")
 
+import os
+
 HN_BASE = "https://hacker-news.firebaseio.com/v0"
-KAFKA_BOOTSTRAP_SERVERS = "127.0.0.1:9092"
+KAFKA_BOOTSTRAP_SERVERS = os.environ.get("KAFKA_BOOTSTRAP_SERVERS", "127.0.0.1:9092")
 KAFKA_TOPIC = "raw-events-topic"
 POLL_INTERVAL_SECONDS = 10
 

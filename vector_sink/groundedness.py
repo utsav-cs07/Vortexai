@@ -6,6 +6,7 @@ rather than a weak/spurious match.
 """
 
 import logging
+import os
 
 from qdrant_client import QdrantClient
 from sentence_transformers import SentenceTransformer
@@ -13,8 +14,8 @@ from sentence_transformers import SentenceTransformer
 logging.basicConfig(level=logging.INFO, format="%(asctime)s [%(levelname)s] %(message)s")
 logger = logging.getLogger("vortex-groundedness")
 
-QDRANT_HOST = "127.0.0.1"
-QDRANT_PORT = 6333
+QDRANT_HOST = os.environ.get("QDRANT_HOST", "127.0.0.1")
+QDRANT_PORT = int(os.environ.get("QDRANT_PORT", "6333"))
 COLLECTION_NAME = "vortex_events"
 EMBEDDING_MODEL_NAME = "all-MiniLM-L6-v2"
 
@@ -59,6 +60,6 @@ def print_report(query_text: str, results: list[dict]) -> None:
 
 if __name__ == "__main__":
     # Quick manual test — replace with any query relevant to what's in your Silver data
-    test_query = "Wikipedia article notability tag removed"
+    test_query = "changes to a programming language article"
     results = query_with_groundedness(test_query)
     print_report(test_query, results)

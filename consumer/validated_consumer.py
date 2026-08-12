@@ -6,6 +6,7 @@ routes valid events to 'validated-events-topic' and invalid ones to 'dlq-topic'.
 
 import json
 import logging
+import os
 
 from confluent_kafka import Consumer, Producer
 from pydantic import ValidationError
@@ -15,7 +16,7 @@ from schemas import HNStoryEvent
 logging.basicConfig(level=logging.INFO, format="%(asctime)s [%(levelname)s] %(message)s")
 logger = logging.getLogger("vortex-consumer")
 
-KAFKA_BOOTSTRAP_SERVERS = "127.0.0.1:9092"
+KAFKA_BOOTSTRAP_SERVERS = os.environ.get("KAFKA_BOOTSTRAP_SERVERS", "127.0.0.1:9092")
 SOURCE_TOPIC = "raw-events-topic"
 VALIDATED_TOPIC = "validated-events-topic"
 DLQ_TOPIC = "dlq-topic"

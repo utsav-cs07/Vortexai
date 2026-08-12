@@ -42,6 +42,68 @@ services:
       - qdrant_data:/qdrant/storage
     restart: unless-stopped
 
+  producer:
+    build: .
+    container_name: vortex-producer
+    command: python producer/hackernews_producer.py
+    environment:
+      KAFKA_BOOTSTRAP_SERVERS: kafka:29092
+    depends_on:
+      - kafka
+    restart: unless-stopped
+
+  consumer:
+    build: .
+    container_name: vortex-consumer
+    command: python consumer/validated_consumer.py
+    environment:
+      KAFKA_BOOTSTRAP_SERVERS: kafka:29092
+    depends_on:
+      - kafka
+    restart: unless-stopped
+
+  bronze-writer:
+    build: .
+    container_name: vortex-bronze-writer
+    command: python storage/bronze_writer.py
+    environment:
+      KAFKA_BOOTSTRAP_SERVERS: kafka:29092
+    volumes:
+      - ./storage:/app/storage
+    depends_on:
+      - kafka
+    restart: unless-stopped
+
+  orchestrator:
+    build: .
+    container_name: vortex-orchestrator
+    command: python orchestration/vortex_flow.py serve
+    environment:
+      QDRANT_HOST: qdrant
+      QDRANT_PORT: "6333"
+    volumes:
+      - ./storage:/app/storage
+    depends_on:
+      - qdrant
+    restart: unless-stopped
+
+  dashboard:
+    build: .
+    container_name: vortex-dashboard
+    command: streamlit run dashboard/app.py --server.address=0.0.0.0
+    ports:
+      - "8501:8501"
+    environment:
+      KAFKA_BOOTSTRAP_SERVERS: kafka:29092
+      QDRANT_HOST: qdrant
+      QDRANT_PORT: "6333"
+    volumes:
+      - ./storage:/app/storage
+    depends_on:
+      - kafka
+      - qdrant
+    restart: unless-stopped
+
 volumes:
   qdrant_data:
   kafka_data:

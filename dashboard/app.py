@@ -23,15 +23,15 @@ from sentence_transformers import SentenceTransformer
 import os
 os.environ["HF_HUB_OFFLINE"] = "1"
 
-KAFKA_BOOTSTRAP_SERVERS = "127.0.0.1:9092"
+KAFKA_BOOTSTRAP_SERVERS = os.environ.get("KAFKA_BOOTSTRAP_SERVERS", "127.0.0.1:9092")
 TOPICS = ["raw-events-topic", "validated-events-topic", "dlq-topic"]
 
 BRONZE_ROOT = "storage/bronze"
 SILVER_PATH = "storage/silver/silver_events.parquet"
 SYNCED_HASHES_PATH = "storage/silver/.synced_hashes.json"
 
-QDRANT_HOST = "127.0.0.1"
-QDRANT_PORT = 6333
+QDRANT_HOST = os.environ.get("QDRANT_HOST", "127.0.0.1")
+QDRANT_PORT = int(os.environ.get("QDRANT_PORT", "6333"))
 COLLECTION_NAME = "vortex_events"
 EMBEDDING_MODEL_NAME = "all-MiniLM-L6-v2"
 GROUNDEDNESS_THRESHOLD = 0.50

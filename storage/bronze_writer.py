@@ -17,7 +17,7 @@ from confluent_kafka import Consumer
 logging.basicConfig(level=logging.INFO, format="%(asctime)s [%(levelname)s] %(message)s")
 logger = logging.getLogger("vortex-bronze")
 
-KAFKA_BOOTSTRAP_SERVERS = "127.0.0.1:9092"
+KAFKA_BOOTSTRAP_SERVERS = os.environ.get("KAFKA_BOOTSTRAP_SERVERS", "127.0.0.1:9092")
 SOURCE_TOPIC = "validated-events-topic"
 BRONZE_ROOT = "storage/bronze"
 
