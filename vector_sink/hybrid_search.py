@@ -118,6 +118,8 @@ def compute_dynamic_threshold(scores: list[float], z: float = DYNAMIC_Z) -> floa
 
 def hybrid_query_with_groundedness(query_text: str, top_k: int = TOP_K):
     model = load_embedding_model()
+    
+    # Ensure it uses 'url' and 'api_key' cleanly with no 'host' or 'port' parameters
     client = QdrantClient(
         url=QDRANT_HOST,
         api_key=QDRANT_API_KEY
