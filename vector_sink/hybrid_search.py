@@ -12,6 +12,7 @@ particular query's results are, rather than applying one static number to
 every query regardless of shape.
 """
 
+from dashboard.app import QDRANT_API_KEY
 import os
 import statistics
 import sys
@@ -125,7 +126,10 @@ def compute_dynamic_threshold(scores: list[float], z: float = DYNAMIC_Z) -> floa
 
 def hybrid_query_with_groundedness(query_text: str, top_k: int = TOP_K):
     model = SentenceTransformer(EMBEDDING_MODEL_NAME)
-    client = QdrantClient(host=QDRANT_HOST, port=QDRANT_PORT)
+    client = QdrantClient(
+        url=QDRANT_HOST,
+        api_key=QDRANT_API_KEY
+    )
 
     dense_results = dense_search(model, client, query_text)
     keyword_results = keyword_search(query_text)
