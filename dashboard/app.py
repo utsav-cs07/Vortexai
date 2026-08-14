@@ -394,17 +394,7 @@
 
 
 
-"""
-VortexAI - Telemetry Dashboard
-Live view of the pipeline: Kafka topic depths, Bronze/Silver row counts,
-Qdrant sync status, and an interactive groundedness query tester.
 
-Run with: streamlit run dashboard/app.py
-"""
-"""
-VortexAI - Real-Time Telemetry Dashboard & Groundedness Guardrail
-Full streaming lakehouse telemetry view with on-demand interactive pipeline execution.
-"""
 import streamlit as st
 st.set_page_config(page_title="VortexAI Telemetry", layout="wide", page_icon="🌀")
 
