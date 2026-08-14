@@ -6,7 +6,6 @@ Uses confluent-kafka (librdkafka-based) for reliability on Windows/Python 3.13.
 """
 
 import json
-import logging
 import os
 import time
 from datetime import datetime, timezone
@@ -14,8 +13,11 @@ from datetime import datetime, timezone
 import pandas as pd
 from confluent_kafka import Consumer
 
-logging.basicConfig(level=logging.INFO, format="%(asctime)s [%(levelname)s] %(message)s")
-logger = logging.getLogger("vortex-bronze")
+import sys
+sys.path.insert(0, os.path.dirname(os.path.dirname(os.path.abspath(__file__))))
+from logging_config import get_json_logger
+
+logger = get_json_logger("vortex-bronze")
 
 KAFKA_BOOTSTRAP_SERVERS = os.environ.get("KAFKA_BOOTSTRAP_SERVERS", "127.0.0.1:9092")
 SOURCE_TOPIC = "validated-events-topic"

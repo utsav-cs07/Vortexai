@@ -5,14 +5,16 @@ result is actually semantically grounded (cosine similarity above threshold)
 rather than a weak/spurious match.
 """
 
-import logging
 import os
 
 from qdrant_client import QdrantClient
 from sentence_transformers import SentenceTransformer
 
-logging.basicConfig(level=logging.INFO, format="%(asctime)s [%(levelname)s] %(message)s")
-logger = logging.getLogger("vortex-groundedness")
+import sys
+sys.path.insert(0, os.path.dirname(os.path.dirname(os.path.abspath(__file__))))
+from logging_config import get_json_logger
+
+logger = get_json_logger("vortex-groundedness")
 
 QDRANT_HOST = os.environ.get("QDRANT_HOST", "127.0.0.1")
 QDRANT_PORT = int(os.environ.get("QDRANT_PORT", "6333"))

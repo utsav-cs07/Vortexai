@@ -7,17 +7,20 @@ Run once, then let hackernews_producer.py handle ongoing live updates.
 """
 
 import json
-import logging
+import os
+import sys
 from concurrent.futures import ThreadPoolExecutor, as_completed
 
 import requests
 from confluent_kafka import Producer
 
-logging.basicConfig(level=logging.INFO, format="%(asctime)s [%(levelname)s] %(message)s")
-logger = logging.getLogger("vortex-backfill")
+sys.path.insert(0, os.path.dirname(os.path.dirname(os.path.abspath(__file__))))
+from logging_config import get_json_logger
+
+logger = get_json_logger("vortex-backfill")
 
 HN_BASE = "https://hacker-news.firebaseio.com/v0"
-KAFKA_BOOTSTRAP_SERVERS = "127.0.0.1:9092"
+KAFKA_BOOTSTRAP_SERVERS = os.environ.get("KAFKA_BOOTSTRAP_SERVERS", "127.0.0.1:9092")
 KAFKA_TOPIC = "raw-events-topic"
 
 BACKFILL_COUNT = 1500   # how many recent items to pull

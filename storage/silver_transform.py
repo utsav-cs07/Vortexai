@@ -6,15 +6,17 @@ snippet per story, deduplicates, and writes to Silver Parquet.
 
 import glob
 import html
-import logging
 import os
 import re
 from urllib.parse import urlparse
 
 import pandas as pd
 
-logging.basicConfig(level=logging.INFO, format="%(asctime)s [%(levelname)s] %(message)s")
-logger = logging.getLogger("vortex-silver")
+import sys
+sys.path.insert(0, os.path.dirname(os.path.dirname(os.path.abspath(__file__))))
+from logging_config import get_json_logger
+
+logger = get_json_logger("vortex-silver")
 
 BRONZE_ROOT = "storage/bronze"
 SILVER_ROOT = "storage/silver"

@@ -5,16 +5,17 @@ Kafka topic 'raw-events-topic'. No auth required.
 """
 
 import json
-import logging
+import os
+import sys
 import time
 
 import requests
 from confluent_kafka import Producer
 
-logging.basicConfig(level=logging.INFO, format="%(asctime)s [%(levelname)s] %(message)s")
-logger = logging.getLogger("vortex-producer")
+sys.path.insert(0, os.path.dirname(os.path.dirname(os.path.abspath(__file__))))
+from logging_config import get_json_logger
 
-import os
+logger = get_json_logger("vortex-producer")
 
 HN_BASE = "https://hacker-news.firebaseio.com/v0"
 KAFKA_BOOTSTRAP_SERVERS = os.environ.get("KAFKA_BOOTSTRAP_SERVERS", "127.0.0.1:9092")

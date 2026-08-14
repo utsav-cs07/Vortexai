@@ -5,16 +5,19 @@ routes valid events to 'validated-events-topic' and invalid ones to 'dlq-topic'.
 """
 
 import json
-import logging
 import os
+import sys
+
+sys.path.insert(0, os.path.dirname(os.path.dirname(os.path.abspath(__file__))))
 
 from confluent_kafka import Consumer, Producer
 from pydantic import ValidationError
 
 from schemas import HNStoryEvent
+from logging_config import get_json_logger
 
-logging.basicConfig(level=logging.INFO, format="%(asctime)s [%(levelname)s] %(message)s")
-logger = logging.getLogger("vortex-consumer")
+logger = get_json_logger("vortex-consumer")
+
 
 KAFKA_BOOTSTRAP_SERVERS = os.environ.get("KAFKA_BOOTSTRAP_SERVERS", "127.0.0.1:9092")
 SOURCE_TOPIC = "raw-events-topic"
@@ -84,7 +87,10 @@ def main() -> None:
 
             total = valid_count + dlq_count
             if total % 20 == 0:
-                logger.info(f"Processed {total} | Valid: {valid_count} | DLQ: {dlq_count}")
+                logger.info(
+                    f"Processed {total} | Valid: {valid_count} | DLQ: {dlq_count}",
+                    extra={"total_processed": total, "valid_count": valid_count, "dlq_count": dlq_count},
+                )
 
     except KeyboardInterrupt:
         logger.info(f"Shutting down. Final tally — Valid: {valid_count} | DLQ: {dlq_count}")

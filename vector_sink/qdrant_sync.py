@@ -6,7 +6,6 @@ and upserts them into Qdrant. Run as a batch job after silver_transform.py.
 
 import hashlib
 import json
-import logging
 import os
 import uuid
 
@@ -15,8 +14,11 @@ from qdrant_client import QdrantClient
 from qdrant_client.models import Distance, PointStruct, VectorParams
 from sentence_transformers import SentenceTransformer
 
-logging.basicConfig(level=logging.INFO, format="%(asctime)s [%(levelname)s] %(message)s")
-logger = logging.getLogger("vortex-vector-sink")
+import sys
+sys.path.insert(0, os.path.dirname(os.path.dirname(os.path.abspath(__file__))))
+from logging_config import get_json_logger
+
+logger = get_json_logger("vortex-vector-sink")
 
 SILVER_PATH = "storage/silver/silver_events.parquet"
 SYNCED_HASHES_PATH = "storage/silver/.synced_hashes.json"
