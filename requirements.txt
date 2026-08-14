@@ -1,8 +1,8 @@
 pydantic==2.9.2
 sseclient-py==1.8.0
 requests==2.32.3
-pandas==2.2.3
-pyarrow==17.0.0
+pandas>=2.2.3
+pyarrow>=18.0.0
 sentence-transformers==3.2.1
 qdrant-client==1.11.3
 streamlit==1.39.0
