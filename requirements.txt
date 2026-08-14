@@ -9,3 +9,4 @@ streamlit==1.39.0
 pytest==8.3.3
 structlog==24.1.0
 rank_bm25==0.2.2
+confluent-kafka==2.5.3
