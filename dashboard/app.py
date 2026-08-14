@@ -422,6 +422,7 @@ import streamlit as st
 from qdrant_client import QdrantClient
 from qdrant_client.models import PointStruct, VectorParams, Distance
 from sentence_transformers import SentenceTransformer
+st.set_page_config(page_title="VortexAI Telemetry", layout="wide", page_icon="🌀")
 
 # Setup project imports for vector search
 PROJECT_ROOT = os.path.dirname(os.path.dirname(os.path.abspath(__file__)))
@@ -456,7 +457,7 @@ COLLECTION_NAME = "vortex_events"
 EMBEDDING_MODEL_NAME = "all-MiniLM-L6-v2"
 TOP_K = 5
 
-st.set_page_config(page_title="VortexAI Telemetry", layout="wide", page_icon="🌀")
+#st.set_page_config(page_title="VortexAI Telemetry", layout="wide", page_icon="🌀")
 
 st.markdown("""
 <style>
