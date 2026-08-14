@@ -419,10 +419,11 @@ import pandas as pd
 import pyarrow.parquet as pq
 import requests
 import streamlit as st
+st.set_page_config(page_title="VortexAI Telemetry", layout="wide", page_icon="🌀")
+
 from qdrant_client import QdrantClient
 from qdrant_client.models import PointStruct, VectorParams, Distance
 from sentence_transformers import SentenceTransformer
-st.set_page_config(page_title="VortexAI Telemetry", layout="wide", page_icon="🌀")
 
 # Setup project imports for vector search
 PROJECT_ROOT = os.path.dirname(os.path.dirname(os.path.abspath(__file__)))
