@@ -405,6 +405,8 @@ Run with: streamlit run dashboard/app.py
 VortexAI - Real-Time Telemetry Dashboard & Groundedness Guardrail
 Full streaming lakehouse telemetry view with on-demand interactive pipeline execution.
 """
+import streamlit as st
+st.set_page_config(page_title="VortexAI Telemetry", layout="wide", page_icon="🌀")
 
 import glob
 import hashlib
@@ -418,8 +420,6 @@ from datetime import datetime, timezone
 import pandas as pd
 import pyarrow.parquet as pq
 import requests
-import streamlit as st
-st.set_page_config(page_title="VortexAI Telemetry", layout="wide", page_icon="🌀")
 
 from qdrant_client import QdrantClient
 from qdrant_client.models import PointStruct, VectorParams, Distance
