@@ -394,7 +394,6 @@
 
 
 
-
 import streamlit as st
 st.set_page_config(page_title="VortexAI Telemetry", layout="wide", page_icon="🌀")
 
@@ -424,7 +423,7 @@ try:
     from hybrid_search import hybrid_query_with_groundedness
 except ImportError:
     # Graceful fallback if hybrid_search module is path-shifted
-    def hybrid_query_with_groundedness(query_text: str, top_k: int = 5):
+    def hybrid_query_with_groundedness(query_text: str, top_k: int = 5, client=None, model=None):
         return []
 
 # Prevent offline model download lockups
@@ -447,8 +446,6 @@ QDRANT_API_KEY = st.secrets.get("QDRANT_API_KEY", os.environ.get("QDRANT_API_KEY
 COLLECTION_NAME = "vortex_events"
 EMBEDDING_MODEL_NAME = "all-MiniLM-L6-v2"
 TOP_K = 5
-
-#st.set_page_config(page_title="VortexAI Telemetry", layout="wide", page_icon="🌀")
 
 st.markdown("""
 <style>
@@ -622,7 +619,12 @@ def clean_event_details(details: str) -> str:
 
 
 def run_groundedness_query(query_text: str, top_k: int = TOP_K):
-    results = hybrid_query_with_groundedness(query_text, top_k=top_k)
+    # Reuse the already-authenticated client/model instead of letting hybrid_search
+    # build its own -- that second connection had no API key, which is what caused
+    # the ValueError on Qdrant Cloud.
+    client = get_qdrant_client()
+    model = get_embedding_model()
+    results = hybrid_query_with_groundedness(query_text, top_k=top_k, client=client, model=model)
     rows = []
     for r in results:
         title, raw_details = split_title_and_details(r["payload"])
@@ -738,7 +740,7 @@ with st.sidebar:
     st.header("⚡ Live Data Generator")
     st.caption("Trigger an on-demand end-to-end pipeline run from the live Hacker News API.")
     fetch_amount = st.slider("Stories to fetch & validate", min_value=1, max_value=10, value=5)
-    
+
     if st.button("🚀 Ingest New Live Stories", help="Fetches live HN events, validates schema, updates Bronze/Silver lakehouse, and syncs vectors to Qdrant."):
         with st.spinner("Running full pipeline: API -> Validation -> Bronze -> Silver -> Qdrant..."):
             v_cnt, d_cnt = run_full_pipeline_ingestion(fetch_amount)

@@ -1,8 +1,20 @@
-from dashboard.app import QDRANT_API_KEY
+"""
+VortexAI - Hybrid Search + Dynamic Groundedness Thresholding
+Combines dense vector similarity (Qdrant/cosine) with BM25 keyword search,
+fused via Reciprocal Rank Fusion (RRF). This catches cases pure dense search
+misses -- e.g. short/bare-name queries with little semantic content but an
+exact keyword match.
+
+Instead of one fixed similarity threshold for every query, the groundedness
+cutoff is calculated per-query from that query's own fused-score distribution
+(mean + z * stdev). This adapts to how "spread out" or "clustered" a
+particular query's results are, rather than applying one static number to
+every query regardless of shape.
+"""
+
 import os
 import statistics
 import sys
-import streamlit as st
 
 sys.path.insert(0, os.path.dirname(os.path.dirname(os.path.abspath(__file__))))
 from logging_config import get_json_logger
@@ -14,7 +26,8 @@ from rank_bm25 import BM25Okapi
 from qdrant_client import QdrantClient
 from sentence_transformers import SentenceTransformer
 
-SILVER_PATH = "storage/silver/silver_events.parquet"
+PROJECT_ROOT = os.path.dirname(os.path.dirname(os.path.abspath(__file__)))
+SILVER_PATH = os.path.join(PROJECT_ROOT, "storage", "silver", "silver_events.parquet")
 QDRANT_HOST = os.environ.get("QDRANT_HOST", "127.0.0.1")
 QDRANT_PORT = int(os.environ.get("QDRANT_PORT", "6333"))
 COLLECTION_NAME = "vortex_events"
@@ -35,11 +48,6 @@ ABSOLUTE_BM25_FLOOR = 5.0     # strong near-exact keyword matches observed >= ~8
 
 _bm25_index = None
 _bm25_corpus_df = None
-
-
-@st.cache_resource
-def load_embedding_model():
-    return SentenceTransformer(EMBEDDING_MODEL_NAME)
 
 
 def _tokenize(text: str) -> list[str]:
@@ -116,14 +124,17 @@ def compute_dynamic_threshold(scores: list[float], z: float = DYNAMIC_Z) -> floa
     return mean + z * stdev
 
 
-def hybrid_query_with_groundedness(query_text: str, top_k: int = TOP_K):
-    model = load_embedding_model()
-    
-    # Ensure it uses 'url' and 'api_key' cleanly with no 'host' or 'port' parameters
-    client = QdrantClient(
-        url=QDRANT_HOST,
-        api_key=QDRANT_API_KEY
-    )
+def hybrid_query_with_groundedness(query_text: str, top_k: int = TOP_K, client: QdrantClient = None, model: SentenceTransformer = None):
+    """
+    If client/model aren't provided, falls back to building a local, unauthenticated
+    connection (fine for local dev). Callers with an already-configured client
+    (e.g. Qdrant Cloud with an API key) should pass it in directly instead of
+    letting this function build its own, which would lack that configuration.
+    """
+    if model is None:
+        model = SentenceTransformer(EMBEDDING_MODEL_NAME)
+    if client is None:
+        client = QdrantClient(host=QDRANT_HOST, port=QDRANT_PORT)
 
     dense_results = dense_search(model, client, query_text)
     keyword_results = keyword_search(query_text)
