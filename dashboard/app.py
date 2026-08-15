@@ -393,7 +393,6 @@
 
 
 
-
 import streamlit as st
 st.set_page_config(page_title="VortexAI Telemetry", layout="wide", page_icon="🌀")
 
@@ -877,7 +876,7 @@ if st.button("Run query", help="Executes dense + BM25 hybrid search.") and query
             df = pd.DataFrame(results)
             st.dataframe(
                 df,
-                width="stretch",
+                use_container_width=True,
                 hide_index=True,
                 column_config={
                     "Dense": st.column_config.TextColumn("Dense", help="Cosine similarity score", width="small"),
